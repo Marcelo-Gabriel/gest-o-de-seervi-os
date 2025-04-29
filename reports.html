@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Sistema de Serviços</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Relatórios <span class="user-info"></span></h1>
+        <nav>
+            <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Início</a>
+            <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </nav>
+    </header>
+
+    <main class="reports-container">
+        <section class="report-filters">
+            <h2>Filtros</h2>
+            <div class="filter-group">
+                <label for="dateRange">Período:</label>
+                <select id="dateRange">
+                    <option value="7">Últimos 7 dias</option>
+                    <option value="30">Últimos 30 dias</option>
+                    <option value="90">Últimos 90 dias</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+            <div class="filter-group custom-date-range" style="display: none;">
+                <label for="startDate">Data Inicial:</label>
+                <input type="date" id="startDate">
+                <label for="endDate">Data Final:</label>
+                <input type="date" id="endDate">
+            </div>
+            <div class="filter-group">
+                <label for="clientFilter">Cliente:</label>
+                <select id="clientFilter">
+                    <option value="all">Todos os Clientes</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="serviceTypeFilter">Tipo de Serviço:</label>
+                <select id="serviceTypeFilter">
+                    <option value="all">Todos os Tipos</option>
+                </select>
+            </div>
+            <button onclick="generateReport()" class="btn-primary">
+                <i class="fas fa-file-alt"></i> Gerar Relatório
+            </button>
+            <button onclick="exportToPDF()" class="btn-secondary">
+                <i class="fas fa-file-pdf"></i> Exportar PDF
+            </button>
+        </section>
+
+        <section class="report-results">
+            <h2>Resultados</h2>
+            <div class="report-summary">
+                <div class="summary-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Total de Serviços</h3>
+                    <p id="totalServices">0</p>
+                </div>
+                <div class="summary-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Clientes Atendidos</h3>
+                    <p id="totalClients">0</p>
+                </div>
+                <div class="summary-card">
+                    <i class="fas fa-tools"></i>
+                    <h3>Tipos de Serviço</h3>
+                    <p id="totalServiceTypes">0</p>
+                </div>
+                <div class="summary-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Manutenções Próximas</h3>
+                    <p id="upcomingMaintenance">0</p>
+                </div>
+            </div>
+
+            <div class="report-details">
+                <h3>Detalhes dos Serviços</h3>
+                <div class="table-container">
+                    <table id="servicesTable">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Tipo de Serviço</th>
+                                <th>Data do Serviço</th>
+                                <th>Próxima Manutenção</th>
+                                <th>Registrado por</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="reports.js"></script>
+</body>
+</html> 

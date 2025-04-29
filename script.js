@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         header.innerHTML += `<span class="user-info"> (${currentUser.username})</span>`;
     }
 
-    displayServices();
+    loadServices();
 });
 
 // Função para fazer logout
@@ -22,20 +22,26 @@ function logout() {
     window.location.href = 'login.html';
 }
 
-// Array para armazenar os serviços
-let services = JSON.parse(localStorage.getItem('services')) || [];
-
-// Função para salvar os serviços no localStorage
-function saveServices() {
-    localStorage.setItem('services', JSON.stringify(services));
+// Função para carregar serviços do banco de dados
+async function loadServices() {
+    try {
+        const response = await fetch('http://localhost:3000/api/services');
+        if (!response.ok) {
+            throw new Error('Erro ao carregar serviços');
+        }
+        const services = await response.json();
+        displayServices(services);
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao carregar serviços. Por favor, tente novamente.');
+    }
 }
 
 // Função para adicionar um novo serviço
-function addService(event) {
+async function addService(event) {
     event.preventDefault();
 
     const service = {
-        id: Date.now(),
         clientName: document.getElementById('clientName').value,
         clientEmail: document.getElementById('clientEmail').value,
         serviceType: document.getElementById('serviceType').value,
@@ -45,14 +51,29 @@ function addService(event) {
         createdBy: JSON.parse(localStorage.getItem('currentUser')).username
     };
 
-    services.push(service);
-    saveServices();
-    displayServices();
-    event.target.reset();
+    try {
+        const response = await fetch('http://localhost:3000/api/services', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(service)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao adicionar serviço');
+        }
+
+        event.target.reset();
+        loadServices();
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao adicionar serviço. Por favor, tente novamente.');
+    }
 }
 
 // Função para exibir os serviços
-function displayServices() {
+function displayServices(services) {
     const servicesList = document.getElementById('servicesList');
     servicesList.innerHTML = '';
 
@@ -129,11 +150,22 @@ function formatDate(dateString) {
 }
 
 // Função para excluir um serviço
-function deleteService(id) {
+async function deleteService(id) {
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
-        services = services.filter(service => service.id !== id);
-        saveServices();
-        displayServices();
+        try {
+            const response = await fetch(`http://localhost:3000/api/services/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao excluir serviço');
+            }
+
+            loadServices();
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao excluir serviço. Por favor, tente novamente.');
+        }
     }
 }
 
